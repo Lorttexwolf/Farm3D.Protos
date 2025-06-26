@@ -1,3 +1,4 @@
+#!/bin/bash
 # To execute this script you will need protoc and protoc-gen-js installed!
 
 set -e
