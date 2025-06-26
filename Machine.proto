@@ -49,12 +49,19 @@ enum MachineTechnology
 enum MachineMessageActions 
 {
 	MachineMessageActions_NONE = 0;
+	// Message suggests resuming the print-job.
 	MachineMessageActions_RESUME = 1;
+	// Message suggests pausing the print-job.
 	MachineMessageActions_PAUSE = 2;
+	// Message suggests stopping the print-job.
 	MachineMessageActions_CANCEL = 4;
+	// Message suggests manually-refreshing the status of the machine.
 	MachineMessageActions_REFRESH = 8;
+	// Message suggests checking or connection or configuration of a machine.
 	MachineMessageActions_CHECK_CONNECTION = 16;
+	// Message states that the machines firmware is not supported.
 	MachineMessageActions_UNSUPPORTED_FIRMWARE = 32;
+	// Message suggests the mark the bed as cleared.
 	MachineMessageActions_CLEAR_BED = 64;
 }
 
@@ -70,7 +77,7 @@ enum MachineMessageSeverity
 // Optional auto-resolve logic for a machine message.
 message MachineMessageAutoResolve 
 {
-	optional MachineState resolve_on_machine_state = 1; // Use enum or int based on MachineState enum elsewhere
+	optional MachineState resolve_on_machine_state = 1;
 	optional bool resolve_on_no_error = 2;
 	optional bool resolve_on_machine_connected = 3;
 }
@@ -81,14 +88,15 @@ message MachineMessage
 	string id = 1;
 	MachineMessageSeverity severity = 2;
 	string title = 3;
+	// More detailed reasoning of the message.
 	string body = 4;
+	// The unix-timestamp in seconds when this message was reported. 
 	int64 reported_at_unix = 6;
+	// Actions and suggestions that may help-resolve the message.
 	MachineMessageActions actions = 7;
+	// Conditions which will auto-resolve the message when true.
 	MachineMessageAutoResolve auto_resolve = 8;
 	bool is_resolved = 9;
-
-	// NOTE: `Exception` is intentionally omitted since exceptions are not portable via Protobuf.
-	// Find another alternative - or, make custom type to store message and possibly stack-trace for debugging
 }
 
 message FilamentColor
@@ -101,10 +109,12 @@ message FilamentColor
 
 message Filament
 {
+	// The material of the filament, such as PLA, ABS Resin, and etc.
 	string material = 1;
 	FilamentColor color = 2;
 }
 
+// The printable volume of a machine in (mm), for cases with double-nozzles which reduce max-area depending on the nozzle selected, use the combined-nozzle area.
 message MachineSize
 {
 	int32 width = 1;
@@ -123,6 +133,7 @@ message MachinePrintDetails
 
 message Machine
 {
+	// The name, or model of a machine such as the "A1" from Bambu Lab and the "K1C" from Creality.
 	string model = 1;
 	MachineTechnology technology = 2;
 	MachineSize size = 3;
@@ -137,6 +148,7 @@ message Machine
 	// Whether an operation on the machine is being performed which may change state such as Pause or Resume
 	bool is_mutating = 10;
 
+	// Informational messages, including maintenance alerts, and other errors/exceptions.  
 	repeated MachineMessage messages = 14;
 
 	optional MachinePrintDetails print_details = 11;

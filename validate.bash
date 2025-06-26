@@ -1,5 +1,5 @@
 #!/bin/bash
-# To execute this script you will need protoc and protoc-gen-js installed!
+# Requires: protoc, protoc-gen-js and ts-proto to be installed and available in PATH or node_modules
 
 set -e
 
@@ -12,9 +12,11 @@ fi
 
 mkdir -p "$OUT_DIR"
 
-# Validate by generating types on all available languages (Unsure if there is a better method)
+# Validate by generating types on several used languages.
 protoc \
     --proto_path=. \
+    --plugin=./node_modules/.bin/protoc-gen-ts_proto \
+    --ts_proto_out="$OUT_DIR" \
     --python_out="$OUT_DIR" \
     --csharp_out="$OUT_DIR" \
     --js_out="$OUT_DIR" \

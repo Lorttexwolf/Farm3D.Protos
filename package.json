@@ -1,0 +1,12 @@
+{
+  "name": "farm3d.protos",
+  "version": "1.0.0",
+  "description": "A shared-collection of Protobuf objects for the Farm3D Project.",
+  "license": "MIT",
+  "author": "",
+  "type": "commonjs",
+  "dependencies": {
+    "protoc-gen-js": "^3.21.4-4",
+    "ts-proto": "^2.7.5"
+  }
+}

@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: Validate
 
 # Controls when the workflow will run
 on:
@@ -29,7 +29,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt install -y protobuf-compiler nodejs npm
-          npm install -g protoc-gen-js
+          npm install
 
       # Shows the installed Protobuf version for debugging
       - name: Show Protoc Version
