@@ -2,7 +2,7 @@
 
 A shared-collection of [Protobuf](https://protobuf.dev/) objects for the [Farm3D Project](https://github.com/Lorttexwolf/Farm3D). 
 
-Refer to [BUILDING.md](./BUILDING.md) for steps to compile this project. 
+Refer to [BUILDING](./BUILDING.md) for steps to develop this project. 
 
 [![Build Status](https://github.com/Lorttexwolf/Farm3D.Protos/actions/workflows/validate.yml/badge.svg)](https://github.com/Lorttexwolf/Farm3D.Protos/actions/workflows/validate.yml)
 

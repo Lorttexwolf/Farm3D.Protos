@@ -77,9 +77,9 @@ enum MachineMessageSeverity
 // Optional auto-resolve logic for a machine message.
 message MachineMessageAutoResolve 
 {
-	optional MachineState resolve_on_machine_state = 1;
-	optional bool resolve_on_no_error = 2;
-	optional bool resolve_on_machine_connected = 3;
+	MachineState resolve_on_machine_state = 1;
+	bool resolve_on_no_error = 2;
+	bool resolve_on_machine_connected = 3;
 }
 
 // Info, warnings or exceptions a machine has encountered.
@@ -101,7 +101,7 @@ message MachineMessage
 
 message FilamentColor
 {
-	optional string name = 1;
+	string name = 1;
 	int32 r = 2;
 	int32 g = 3;
 	int32 b = 4;
@@ -151,7 +151,7 @@ message Machine
 	// Informational messages, including maintenance alerts, and other errors/exceptions.  
 	repeated MachineMessage messages = 14;
 
-	optional MachinePrintDetails print_details = 11;
+	MachinePrintDetails print_details = 11;
 
 	map<int32, Filament> filaments = 12;
 

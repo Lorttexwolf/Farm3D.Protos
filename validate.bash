@@ -6,16 +6,21 @@ set -e
 OUT_DIR="out"
 
 if ! command -v protoc &> /dev/null; then
-    echo "Error: protoc is not installed or not in PATH!"
+    echo "Error: protoc is not installed or not in PATH!" >&2
     exit 1
 fi
 
 mkdir -p "$OUT_DIR"
 
+# ts-proto requires an absolute path when specifying the location of the protoc-gen-ts_proto executable 
+PROTOC_GEN_TS_PROTO_EXEC="$PWD/node_modules/ts-proto/protoc-gen-ts_proto"
+PROTOC_GEN_JS_EXEC="$PWD/node_modules/protoc-gen-js/bin/protoc-gen-js"
+
 # Validate by generating types on several used languages.
 protoc \
     --proto_path=. \
-    --plugin=./node_modules/.bin/protoc-gen-ts_proto \
+    --plugin=protoc-gen-js="$PROTOC_GEN_JS_EXEC" \
+    --plugin=protoc-gen-ts_proto="$PROTOC_GEN_TS_PROTO_EXEC" \
     --ts_proto_out="$OUT_DIR" \
     --python_out="$OUT_DIR" \
     --csharp_out="$OUT_DIR" \
