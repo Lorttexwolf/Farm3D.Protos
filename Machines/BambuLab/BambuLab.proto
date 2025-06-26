@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+option csharp_namespace = "Farm3D.Machines.BambuLab";
+
+package Farm3D.Machines.BambuLab;
+
+message BambuLabMachineConfiguration {
+  string serial_number = 1;
+  string access_code = 2;
+  string ip_address = 3;
+  int64 print_hours = 4;
+};

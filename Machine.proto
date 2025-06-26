@@ -1,0 +1,148 @@
+syntax = "proto3";
+
+option csharp_namespace = "Farm3D";
+
+package Farm3D;
+
+enum MachineState
+{
+	MachineState_NONE = 0;
+	MachineState_UNKNOWN = 1;
+	// Nothing is on a build-plate.
+	MachineState_IDLE = 2;
+	MachineState_PRINTING = 4;
+	// Machine is preparing to begin printing.
+	// Temporary state when calibration is occurring before a print begins.
+	// Canceling is usually available during this time.
+	MachineState_PREPARING = 8; 
+    // Machine has successfully printed the desired model.
+	MachineState_PRINTED = 16;
+    // Printing or preparing has been paused and may be resumed.
+	MachineState_PAUSED = 32;
+	// Printing was aborted/canceled and model may be present.
+	MachineState_STOPPED = 64;
+    // An exception was encountered, review the list of messages/exceptions.
+	MachineState_ERROR = 128;
+}
+
+// Flags representing machine capabilities.
+// These can be combined using bitwise OR (Flagged)
+enum MachineFeatures 
+{
+	MachineFeatures_NONE = 0;
+	// Prints (such as GCODE & 3MF) can be sent and started remotely.
+	MachineFeatures_PRINTABLE = 2;
+	// Machine can be paused, resumed, and stopped remotely.
+	MachineFeatures_CONTROLLABLE = 4;
+	// Machine can utilize multiple filaments itself.
+	MachineFeatures_MULTIFILAMENT = 8; 
+	MachineFeatures_LIGHTING = 16;
+}
+
+enum MachineTechnology
+{
+	MachineTechnology_FDM = 0;
+	MachineTechnology_SLA = 1;
+}
+
+// Actions which may be taken to poetically resolve a message (Flagged)
+enum MachineMessageActions 
+{
+	MachineMessageActions_NONE = 0;
+	MachineMessageActions_RESUME = 1;
+	MachineMessageActions_PAUSE = 2;
+	MachineMessageActions_CANCEL = 4;
+	MachineMessageActions_REFRESH = 8;
+	MachineMessageActions_CHECK_CONNECTION = 16;
+	MachineMessageActions_UNSUPPORTED_FIRMWARE = 32;
+	MachineMessageActions_CLEAR_BED = 64;
+}
+
+// Severity level of the message (Non-Flagged)
+enum MachineMessageSeverity 
+{
+	MachineMessageSeverity_INFO = 0;
+	MachineMessageSeverity_SUCCESS = 1;
+	MachineMessageSeverity_WARNING = 2;
+	MachineMessageSeverity_ERROR = 3;
+}
+
+// Optional auto-resolve logic for a machine message.
+message MachineMessageAutoResolve 
+{
+	optional MachineState resolve_on_machine_state = 1; // Use enum or int based on MachineState enum elsewhere
+	optional bool resolve_on_no_error = 2;
+	optional bool resolve_on_machine_connected = 3;
+}
+
+// Info, warnings or exceptions a machine has encountered.
+message MachineMessage 
+{
+	string id = 1;
+	MachineMessageSeverity severity = 2;
+	string title = 3;
+	string body = 4;
+	int64 reported_at_unix = 6;
+	MachineMessageActions actions = 7;
+	MachineMessageAutoResolve auto_resolve = 8;
+	bool is_resolved = 9;
+
+	// NOTE: `Exception` is intentionally omitted since exceptions are not portable via Protobuf.
+	// Find another alternative - or, make custom type to store message and possibly stack-trace for debugging
+}
+
+message FilamentColor
+{
+	optional string name = 1;
+	int32 r = 2;
+	int32 g = 3;
+	int32 b = 4;
+}
+
+message Filament
+{
+	string material = 1;
+	FilamentColor color = 2;
+}
+
+message MachineSize
+{
+	int32 width = 1;
+	int32 length = 2;
+	int32 height = 3;
+}
+
+message MachinePrintDetails
+{
+	string fileName = 1;
+	int32 percentageComplete = 2;
+	int64 remainingTimeInMinutes = 3;
+    // duration remainingTime = 5;
+	int64 totalTimeInMinutes = 4;
+}
+
+message Machine
+{
+	string model = 1;
+	MachineTechnology technology = 2;
+	MachineSize size = 3;
+	// A unique identifier of this machine.
+	string identifier = 4;
+	MachineFeatures features = 5;
+	bool is_connected = 6;
+	MachineState status = 7;
+	int64 last_updated_at_unix = 8;
+	// Total accumulated time this machine has spent actively printing.
+	int64 printing_time_minutes = 9;
+	// Whether an operation on the machine is being performed which may change state such as Pause or Resume
+	bool is_mutating = 10;
+
+	repeated MachineMessage messages = 14;
+
+	optional MachinePrintDetails print_details = 11;
+
+	map<int32, Filament> filaments = 12;
+
+    // An object containing the name, and then status on (true), and off (false) of a light-fixture on a given machine.
+	map<string, bool> lighting = 13;
+}
